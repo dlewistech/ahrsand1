@@ -1,6 +1,4 @@
 public Class CheckRecursive{
-    //Code Check
-    
     private static boolean firstRun = true;
     public static boolean isFirstRun(){
         if(firstRun){
