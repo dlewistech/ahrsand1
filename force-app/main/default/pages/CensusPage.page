@@ -1,0 +1,47 @@
+<apex:page standardController="Opportunity">
+
+<!-- AJAX Toolkit , jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+ <script type="text/javascript">
+    var __sfdcSessionId = '{!GETSESSIONID()}';
+    </script>
+<script src="/soap/ajax/38.0/connection.js"></script>
+<script src="/soap/ajax/38.0/apex.js"></script>
+
+<script type="text/javascript">
+
+// Create a new central Census record if there is not one.
+queryResult = sforce.connection.query("SELECT name, id, opportunity__c FROM Census__c WHERE opportunity__c = '{!Opportunity.Id}'");
+var records = queryResult.getArray("records");
+
+
+if (records.length > 0) {
+
+// Go ahead and simply redirect
+var censusRecord = "/" + records[0].Id;
+var myWindow = window.open(censusRecord,"_blank", "top=50,left=100,width=600,height=600");
+
+} else {
+
+// Create a census record
+var censusRecord = new sforce.SObject("Census__c");
+censusRecord.Opportunity__c = '{!Opportunity.Id}';
+var insertResult = sforce.connection.create([censusRecord]);
+
+// Make sure result was successful 
+var newRecords = insertResult.getArray("records");
+if (newRecords.length > 0) {
+var censusRecord = "/" + newRecords[0].Id;
+var myWindow = window.open(censusRecord,"_blank", "top=50,left=100,width=600,height=600");
+
+} else {
+alert("An error during record creation has occured. Please contact your Salesforce Administrator.");
+}
+
+// Redirect
+
+
+}
+
+</script>
+</apex:page>

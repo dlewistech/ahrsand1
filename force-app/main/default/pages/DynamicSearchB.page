@@ -1,0 +1,100 @@
+<apex:page controller="DynamicSearchBController">
+    <!-- jQuery 2.2.4 -->
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"/>
+    
+     <!-- Datatables javascript library -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jq-2.2.3/dt-1.10.12/datatables.min.css"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-2.2.3/dt-1.10.12/datatables.min.js"></script>
+    
+    <!-- jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    
+    <!-- Font Awesome (icon pack) -->
+	<script src="https://use.fontawesome.com/d84db53e18.js"></script>
+
+    
+    <!-- DataTables - Table Setup Script -->
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $(document).tooltip();		
+        
+    	// DataTable
+        var table = $('#dataTable').DataTable({
+            "scrollY":        "600px",
+            "scrollCollapse": true,
+            "paging":         false,
+            "language": {
+                "zeroRecords": "No records found. <br/> " + 
+                "Create a new Opportunity: <br/>" + 
+                "<a href='../006/e?RecordType=01241000000awdF&ent=Opportunity'>Insurance</a>&nbsp;&nbsp;" + 
+                "<a href='../006/e?RecordType=01241000000awdA&ent=Opportunity'>HR</a>&nbsp;&nbsp;" +
+                "<a href='../006/e?RecordType=01241000000awdK&ent=Opportunity'>Staffing</a>"
+            }   
+        });  
+        
+        // Apply the search      
+       	table.columns().every( function () {
+            var that = this;
+            
+            $( 'input', this.footer() ).on( 'keyup change', function () {
+                
+                if ( that.search() !== this.value ) {
+                    that
+                    .search( this.value )
+                    .draw();
+                }
+            } );
+            
+        } );
+        
+        $('#dataTable tfoot tr').appendTo('#dataTable thead');
+        $('#dataTable_filter').css('float', 'left');
+        
+        
+        
+        
+    });
+    </script>
+    
+    
+    
+    <table id="dataTable" class="display" cellspace="0" width="100%">
+        <thead>
+        	<tr>
+            	<th>Opportunity Name</th>
+                <th>Company Name</th>
+                <th>Created Date</th>  
+                <th>Owner</th>
+                <th>Division</th>
+            </tr>
+        </thead>
+        <tfoot>
+        	<tr>
+                <th><input type="text" placeholder="Search Opportunity Name"/></th>
+                <th><input type="text" placeholder="Search Company Name"/></th>
+                <th></th>
+                <th><input type="text" placeholder="Search Owner"/></th>
+                <th><input type="text" placeholder="Search Division"/></th>
+            </tr>
+        </tfoot>
+        <tbody>
+        	<apex:repeat value="{!allOpps}" var="o">
+            	<tr>
+                	<td>
+                        <a href="../{!o.Id}">{!o.Name}</a>
+                    </td>
+                	<td>
+                        <a href="../{!o.Account.Id}">{!o.Account.Name}</a>
+                    </td>
+                    <td>{!o.CreatedDate}</td>
+                    <td>{!o.Owner.Name}</td>
+                    <td>{!o.RecordType.Name}</td>
+                </tr>
+            </apex:repeat>
+            
+        </tbody>
+        
+    </table>
+    
+</apex:page>

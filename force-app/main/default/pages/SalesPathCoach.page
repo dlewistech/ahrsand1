@@ -1,0 +1,106 @@
+<!--
+=======================================Sales Path Coach=======================================
+Trident Contract Management
+Developer: Isaac Lemke 
+2.7.2017
+
+Notes:
+* Make sure that your stages are arranged to display closed won/lost last.
+[The last two stages are combined to display as "Closed" (else/if condition #4)]
+
+==============================================================================================
+-->
+<apex:page standardController="Opportunity" showHeader="false" sidebar="false" standardStylesheets="false" applyBodyTag="false" applyHtmlTag="false" docType="html-5.0">
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+<head> 
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <apex:stylesheet value="{!URLFOR($Resource.slds, 'assets/styles/salesforce-lightning-design-system-vf.min.css')}" />
+    <apex:includeScript value="{!URLFor($Resource.jQuery3)}"/>
+    <script src="https://use.fontawesome.com/cb92bd55cd.js"></script>
+<script>
+j$ = jQuery.noConflict();
+j$(document).ready(function() {
+                   
+    var allStagesList = j$('[id$=input1] option');
+    var currentStage = j$('[id$=input1] option:selected');
+    var numberOfStages = allStagesList.length;
+    var selectedIndex = currentStage.index();
+    var outputText = "";
+    
+    for (var i = 0; i < numberOfStages - 1; i++) {
+        var stageName = j$(allStagesList[i]).val();
+        
+        if (i < selectedIndex && i != numberOfStages - 2) {
+            // Completed
+            outputText += '<li class="slds-tabs--path__item slds-is-complete" role="presentation">';
+            outputText += '<a class="slds-tabs--path__link" id="tabs-path-91" aria-controls="content-path-1" aria-selected="false" tabindex="-1" role="tab" href="javascript:void(0);" aria-live="assertive">';
+            outputText += '<span class="slds-tabs--path__stage">';
+            outputText += '<i class="fa fa-check" aria-hidden="true"></i>';
+            outputText += '<span class="slds-assistive-text">Stage Complete</span></span>';
+            outputText += '<span class="slds-tabs--path__title">' + stageName + '</span></a></li>';
+        } else if (i > selectedIndex && i != numberOfStages - 2) {
+            // Incomplete
+            outputText += '<li class="slds-tabs--path__item slds-is-incomplete" role="presentation">';
+            outputText += '<a class="slds-tabs--path__link" id="tabs-path-93" aria-controls="content-path-1" aria-selected="false" tabindex="-1" role="tab" href="javascript:void(0);" aria-live="assertive">';
+            outputText += '<span class="slds-tabs--path__stage">';
+            outputText += '<i class="fa fa-check" aria-hidden="true"></i></span>';
+            outputText += '<span class="slds-tabs--path__title">' + stageName + '</span></a></li>';
+        } else if (i == selectedIndex && i != numberOfStages - 2) {
+            // Current
+            outputText += '<li class="slds-tabs--path__item slds-is-current" role="presentation">';
+            outputText += '<a class="slds-tabs--path__link" id="tabs-path-93" aria-controls="content-path-1" aria-selected="false" tabindex="-1" role="tab" href="javascript:void(0);" aria-live="assertive">';
+            outputText += '<span class="slds-tabs--path__stage">';
+            outputText += '<i class="fa fa-check" aria-hidden="true"></i></span>';
+            outputText += '<span class="slds-tabs--path__title">' + stageName + '</span></a></li>';
+        } else if (i == numberOfStages - 2) {
+            if (i > selectedIndex) {
+                 // Last Stage Incomplete - Closed Won/Closed Lost 
+                outputText += '<li class="slds-tabs--path__item slds-is-incomplete" role="presentation">';
+                outputText += '<a class="slds-tabs--path__link" id="tabs-path-93" aria-controls="content-path-1" aria-selected="false" tabindex="-1" role="tab" href="javascript:void(0);" aria-live="assertive">';
+                outputText += '<span class="slds-tabs--path__stage">';
+                outputText += '<i class="fa fa-check" aria-hidden="true"></i></span>';
+                outputText += '<span class="slds-tabs--path__title">Closed</span></a></li>';
+            } else {
+                // Last Stage Complete - Closed Won/Closed Lost 
+                outputText += '<li class="slds-tabs--path__item slds-is-complete" role="presentation">';
+                outputText += '<a class="slds-tabs--path__link" id="tabs-path-91" aria-controls="content-path-1" aria-selected="false" tabindex="-1" role="tab" href="javascript:void(0);" aria-live="assertive">';
+                outputText += '<span class="slds-tabs--path__stage">';
+                outputText += '<i class="fa fa-check" aria-hidden="true"></i>';
+                outputText += '<span class="slds-assistive-text">Stage Complete</span></span>';
+                outputText += '<span class="slds-tabs--path__title">Closed</span></a></li>';    
+            } 
+        } 
+    }
+    
+    j$('[id$=coreListParent]').append(outputText);
+   
+});
+</script>
+</head>   
+<body>
+<div class="Michigan">
+<apex:form id="myForm" style="display:none">
+  <apex:inputField value="{!Opportunity.StageName}" id="input1"/>
+</apex:form>
+<div class="slds-grid" style="padding-top:14px;">
+  <div class="slds-tabs--path" role="application">
+    <ul class="slds-tabs--path__nav" role="tablist" id="coreListParent">
+      
+    </ul>
+  </div>
+    <!--
+  <button class="slds-button slds-button--brand slds-path__mark-complete slds-no-flex slds-m-horizontal--small">
+    <svg class="slds-button__icon slds-button__icon--left" aria-hidden="true">
+      <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#check"></use>
+    </svg>Mark Status as Complete</button>
+    -->
+</div>    
+
+    
+</div>   
+</body>
+    
+</html>
+</apex:page>

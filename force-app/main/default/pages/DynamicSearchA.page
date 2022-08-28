@@ -1,0 +1,103 @@
+<apex:page controller="DynamicSearchAController" readOnly="true">
+    <!-- jQuery 2.2.4 -->
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"/>
+    
+     <!-- Datatables javascript library -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jq-2.2.3/dt-1.10.12/datatables.min.css"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-2.2.3/dt-1.10.12/datatables.min.js"></script>
+    
+    <!-- jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    
+    <!-- Font Awesome (icon pack) -->
+    <script src="https://use.fontawesome.com/d84db53e18.js"></script>
+
+    
+    <!-- DataTables - Table Setup Script -->
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $(document).tooltip();      
+        
+        // DataTable
+        var table = $('#dataTable').DataTable({
+            "scrollY":        "600px",
+            "scrollCollapse": true,
+            "paging":         false,
+            "language": {
+                "zeroRecords": "No records found.<br/><a href='../001/ent=Account'>Create a new Account</a>"
+            }   
+        });  
+        
+        // Apply the search      
+        table.columns().every( function () {
+            var that = this;
+            
+            $( 'input', this.footer() ).on( 'keyup change', function () {
+                
+                if ( that.search() !== this.value ) {
+                    that
+                    .search( this.value )
+                    .draw();
+                }
+            } );
+            
+        } );
+        
+        $('#dataTable tfoot tr').appendTo('#dataTable thead');
+        $('#dataTable_filter').css('float', 'left');
+        
+        
+        
+        
+    });
+    </script>
+    
+    
+    
+    <table id="dataTable" class="display" cellspace="0" width="100%">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Account Name</th>            
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th><input type="text" placeholder="Search First Name"/></th>
+                <th><input type="text" placeholder="Search Last Name"/></th>
+                <th><input type="text" placeholder="Search Account Name"/></th>
+            </tr>
+        </tfoot>
+        <tbody>
+            <apex:repeat value="{!allAccounts}" var="a">
+                <tr>
+                    <td title="No contacts appear in this account">-</td>
+                    <td>-</td>
+                    <td>
+                        <a href="../{!a.Id}">{!a.Name}</a>
+                        <a href="../003/e?={!a.Id}&accid={!a.Id}&ent=Contact">
+                            <i title="Create a new contact" class="fa fa-id-card-o" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                </tr>
+            </apex:repeat>
+            <apex:repeat value="{!allContacts}" var="c">
+                <tr>
+                    <td>{!c.Firstname}</td>
+                    <td>{!c.Lastname}</td>
+                    <td>
+                        <a href="../{!c.account.Id}">{!c.account.name}</a>
+                        <a href="../003/e?={!c.AccountId}&accid={!c.AccountId}&ent=Contact">
+                            <i title="Create a new contact" class="fa fa-id-card-o" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                </tr>
+            </apex:repeat>
+        
+        </tbody>
+        
+    </table>
+    
+</apex:page>
